@@ -1,22 +1,15 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
-const { buildSchema } = require('graphql');
+const schema = require('./schema/schema')
+
 const app = express();
 
-const schema = buildSchema(`
-  type Query {
-    message: String
-  }
-`);
-
-const root = { message: () => 'This is test!' };
-
 app.use('/graphql', graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true,
+  schema,
+  graphiql: true
 }))
 
+
 app.listen(5000, () => {
-    console.log('Server is running');
+  console.log('Listing on port 5000');
 })
