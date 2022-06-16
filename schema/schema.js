@@ -1,32 +1,16 @@
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList, GraphQLInputObjectType, GraphQLInt } = graphql;
+const { GraphQLObjectType, GraphQLSchema, GraphQLList } = graphql;
+const { BooksType, deleteBookType, updateBookType, inputBookType } = require('./types/types');
 const _ = require('lodash');
 
-const books = [
+let books = [
     { id: '1', name: 'Name of the Wind', genre: 'Fantasy' },
     { id: '2', name: 'The Final Empire', genre: 'Fantasy' },
     { id: '3', name: 'The Long Earth', genre: 'Sci-Fi' },
-]
+];
 
-const BooksType = new GraphQLObjectType({
-    name: 'Book',
-    fields: () => ({
-        id: { type: GraphQLString },
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString }
-    })
-});
 
-const inputBookType = new GraphQLInputObjectType({
-    name: 'BookInput',
-    fields: {
-        id: { type: GraphQLString },
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString },
-    }
-});
-
-// 
+//Mutations
 const mutationType = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
@@ -43,7 +27,41 @@ const mutationType = new GraphQLObjectType({
                     genre: args.input.genre
                 }
                 books.push(book);
+
                 return _.find(books, { id: args.input.id });
+            }
+        },
+        removeBook: {
+            type: new GraphQLList(BooksType),
+            args: {
+                input: { type: deleteBookType }
+            },
+            resolve(parent, args) {
+                // code to get data from db/others resource
+                const id = args.input.id;
+
+                let data = books.filter(item => item.id !== id);
+                console.log(data);
+                books = data;
+
+                if (data) {
+                    return data;
+                }
+            }
+        },
+        updateBook: {
+            type: new GraphQLList(BooksType),
+            args: {
+                input: { type: updateBookType },
+            },
+            resolve(parent, args) {
+                // code to get data from db/others resource
+                const { input } = args;
+
+                let newData = books.map(item => item.id === input.id ? { ...item, ...input } : item);
+                books = newData;
+
+                return books;
             }
         }
     }
@@ -55,9 +73,7 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         book: {
             type: new GraphQLList(BooksType),
-            // args: { id: { type: GraphQLString } },
             resolve(parent, args) {
-                // args.id
                 // code to get data from db/others resource
                 return books;
             }
