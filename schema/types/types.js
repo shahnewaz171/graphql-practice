@@ -33,6 +33,8 @@ const updateFoodType = new GraphQLInputObjectType({
     fields: {
         id: { type: GraphQLString },
         category: { type: GraphQLString },
+        thumb: { type: GraphQLString },
+        description: { type: GraphQLString }
     }
 });
 
