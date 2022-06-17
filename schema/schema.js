@@ -1,67 +1,62 @@
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLSchema, GraphQLList } = graphql;
-const { BooksType, deleteBookType, updateBookType, inputBookType } = require('./types/types');
+const { FoodsType, inputFoodType, deleteFoodType, updateFoodType } = require('./types/types');
+let foods = require('./data/data');
 const _ = require('lodash');
-
-let books = [
-    { id: '1', name: 'Name of the Wind', genre: 'Fantasy' },
-    { id: '2', name: 'The Final Empire', genre: 'Fantasy' },
-    { id: '3', name: 'The Long Earth', genre: 'Sci-Fi' },
-];
 
 
 //Mutations
 const mutationType = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        addBook: {
-            type: BooksType,
+        addFood: {
+            type: FoodsType,
             args: {
-                input: { type: inputBookType }
+                input: { type: inputFoodType }
             },
             resolve(parent, args) {
                 // code to get data from db/others resource
-                let book = {
+                let food = {
                     id: args.input.id,
-                    name: args.input.name,
-                    genre: args.input.genre
+                    category: args.input.category,
+                    thumb: args.input.thumb,
+                    description: args.input.description
                 }
-                books.push(book);
+                foods.push(food);
 
-                return _.find(books, { id: args.input.id });
+                return _.find(foods, { id: args.input.id });
             }
         },
-        removeBook: {
-            type: new GraphQLList(BooksType),
+        removeFood: {
+            type: new GraphQLList(FoodsType),
             args: {
-                input: { type: deleteBookType }
+                input: { type: deleteFoodType }
             },
             resolve(parent, args) {
                 // code to get data from db/others resource
                 const id = args.input.id;
 
-                let data = books.filter(item => item.id !== id);
-                console.log(data);
-                books = data;
+                let data = foods.filter(item => item.id !== id);
+                foods = data;
 
                 if (data) {
                     return data;
                 }
             }
         },
-        updateBook: {
-            type: new GraphQLList(BooksType),
+        updateFood: {
+            type: new GraphQLList(FoodsType),
             args: {
-                input: { type: updateBookType },
+                input: { type: updateFoodType },
             },
             resolve(parent, args) {
                 // code to get data from db/others resource
                 const { input } = args;
 
-                let newData = books.map(item => item.id === input.id ? { ...item, ...input } : item);
-                books = newData;
+                let newData = foods.map(item => item.id === input.id ? { ...item, ...input } : item);
+                foods = newData;
 
-                return books;
+                return foods;
             }
         }
     }
@@ -71,11 +66,11 @@ const mutationType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        book: {
-            type: new GraphQLList(BooksType),
+        foods: {
+            type: new GraphQLList(FoodsType),
             resolve(parent, args) {
                 // code to get data from db/others resource
-                return books;
+                return foods;
             }
         }
     }

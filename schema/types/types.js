@@ -1,42 +1,44 @@
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLInputObjectType } = graphql;
 
-const BooksType = new GraphQLObjectType({
-    name: 'Book',
+const FoodsType = new GraphQLObjectType({
+    name: 'Food',
     fields: () => ({
         id: { type: GraphQLString },
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString }
+        category: { type: GraphQLString },
+        thumb: { type: GraphQLString },
+        description: { type: GraphQLString }
     })
 });
 
-const inputBookType = new GraphQLInputObjectType({
-    name: 'BookInput',
+const inputFoodType = new GraphQLInputObjectType({
+    name: 'FoodInput',
     fields: {
         id: { type: GraphQLString },
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString },
+        category: { type: GraphQLString },
+        thumb: { type: GraphQLString },
+        description: { type: GraphQLString }
     }
 });
 
-const deleteBookType = new GraphQLInputObjectType({
-    name: 'DeleteBookInput',
+const deleteFoodType = new GraphQLInputObjectType({
+    name: 'DeleteFoodInput',
     fields: {
         id: { type: GraphQLString },
     }
 });
 
-const updateBookType = new GraphQLInputObjectType({
-    name: 'UpdateBookInput',
+const updateFoodType = new GraphQLInputObjectType({
+    name: 'UpdateFoodInput',
     fields: {
         id: { type: GraphQLString },
-        genre: { type: GraphQLString },
+        category: { type: GraphQLString },
     }
 });
 
 module.exports = {
-    BooksType,
-    inputBookType,
-    deleteBookType,
-    updateBookType
+    FoodsType,
+    inputFoodType,
+    deleteFoodType,
+    updateFoodType
 }
